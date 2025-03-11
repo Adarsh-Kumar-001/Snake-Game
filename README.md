@@ -1,4 +1,4 @@
-# # Snake Game (C)
+# # Snake Game (College Project)
 
 ## Introduction
 Welcome to the Snake Game! This is a console-based game written in C, featuring a classic arcade-style experience where players control a snake to navigate the screen, eat food, and grow in length while avoiding collisions. The game includes a leaderboard system and database support to track player scores efficiently.
