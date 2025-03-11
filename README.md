@@ -13,7 +13,7 @@ Welcome to the Snake Game! This is a console-based game written in C, featuring 
 
 ## How to Play
 1. **Start the Game**: Run the program in the console.
-2. **Control the Snake**: Use `W` (up), `A` (left), `S` (down), and `D` (right) keys to move the snake.
+2. **Control the Snake**: Use `k` (up), `h` (left), `j` (down), and `l` (right) keys to move the snake.
 3. **Eat Food**: Guide the snake to the food items on the screen to increase your score.
 4. **Avoid Collisions**: Do not let the snake collide with the walls or itself, or the game will end.
 5. **Leaderboard**: Scores are saved in a database, allowing players to compete for the highest score.
