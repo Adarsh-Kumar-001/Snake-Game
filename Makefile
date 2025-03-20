@@ -1,29 +1,33 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude
-SRC_DIR = src
-OBJ_DIR = obj
-BIN = snake_game
+CFLAGS = -Iinclude -Wall -Wextra -Werror
+OBJDIR = obj
+SRCDIR = src
+BINDIR = .
+TARGET = snake
 
-SRCS = $(wildcard $(SRC_DIR)/*.c)
-OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
+# Source and Object Files
+SRC = $(SRCDIR)/main.c $(SRCDIR)/snake_game.c
+OBJ = $(OBJDIR)/main.o $(OBJDIR)/snake_game.o
 
-$(BIN): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+# Create obj directory if not exists
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+# Compile object files
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+# Link the final executable
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET)
 
+# Build target for make snake
+snake: $(TARGET)
+
+# Clean compiled files
 clean:
-	rm -rf $(OBJ_DIR) $(BIN)
+	rm -rf $(OBJDIR)/*.o $(TARGET)
 
-.PHONY: all clean
-
-# Ensure main and test files are compiled
-all: $(BIN)
-
-$(OBJ_DIR)/main.o: $(SRC_DIR)/main.c include/test.h
-$(OBJ_DIR)/test.o: $(SRC_DIR)/test.c include/test.h
+# Rebuild everything
+all: clean snake
 
