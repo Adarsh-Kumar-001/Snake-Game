@@ -6,7 +6,6 @@ Welcome to the Snake Game! This is a console-based game written in C, featuring 
 ### Features:
 - Console-based gameplay with smooth controls
 - Use of efficient data structures and data types
-- No use of predefined data structures for better learning and optimization
 - Database support for storing player scores
 - Leaderboard system to track high scores
 - Multiple file distribution for code organization
