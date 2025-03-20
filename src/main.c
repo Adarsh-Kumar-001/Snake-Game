@@ -1,4 +1,4 @@
-#include "../include/snake_game.h"
+#include "../include/main_menu.h"
 
 int main() {
     run_main_menu();

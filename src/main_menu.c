@@ -1,4 +1,8 @@
-#include "../include/snake_game.h"
+#include "../include/main_menu.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
 void about_developers_window() {
     print_centered("ABOUT DEVELOPERS");
@@ -16,7 +20,7 @@ void print_centered(const char *text) {
     printf("%s\n", text);
 }
 
-void display_menu() {
+void display_main_menu() {
     printf("\n");
     print_centered("=== SNAKE GAME ===");
     printf("\n");
@@ -36,7 +40,7 @@ void run_main_menu() {
 
     while (running) { 
         system("clear || cls");
-        display_menu();
+        display_main_menu();
         printf("Enter your choice: ");
         scanf("%d", &choice);
 

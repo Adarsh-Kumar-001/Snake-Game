@@ -6,8 +6,8 @@ BINDIR = .
 TARGET = snake
 
 # Source and Object Files
-SRC = $(SRCDIR)/main.c $(SRCDIR)/snake_game.c
-OBJ = $(OBJDIR)/main.o $(OBJDIR)/snake_game.o
+SRC = $(SRCDIR)/main.c $(SRCDIR)/main_menu.c
+OBJ = $(OBJDIR)/main.o $(OBJDIR)/main_menu.o
 
 # Create obj directory if not exists
 $(OBJDIR):
