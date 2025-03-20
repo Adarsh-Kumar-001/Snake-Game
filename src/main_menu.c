@@ -25,29 +25,60 @@ void display_main_menu() {
     print_centered("=== SNAKE GAME ===");
     printf("\n");
 
-    print_centered("1. New User");
-    print_centered("2. Existing User");
-    print_centered("3. Leaderboard");
-    print_centered("4. About Developers");
-    print_centered("5. Exit");
+    print_centered("New User");
+    print_centered("Existing User");
+    print_centered("Leaderboard");
+    print_centered("About Developers");
+    print_centered("Exit");
     printf("\n");
 }
 
 void run_main_menu() {
     int choice;
     bool running = true;
-    char name[100];
+    char name[50]; // make this global
 
     while (running) { 
         system("clear || cls");
         display_main_menu();
-        printf("Enter your choice: ");
+        printf("Enter your choice (1-5): ");
         scanf("%d", &choice);
+        while(getchar() != '\n');
 
-        switch (choice) {
-            case 1:
+        switch(choice){
+            case 1:{
+                printf("Enter your username: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0';
+                // Check if username already exists
+                // if exists, then break
+                FILE* fptr = fopen("data/usernames.txt", "a+");
+                if(fptr == NULL){
+                    printf("Error opening usernames.txt!");
+                    break;
+                }
+                rewind(fptr); // To bring the pointer to the start of the file
+                
+                // Scanning the usernames for existing user
+                bool username_exists = false;
+                char existing_name[100];
+                while(fgets(existing_name, sizeof(existing_name), fptr) != NULL){
+                    existing_name[strcspn(existing_name, "\n")] = '\0'; // Remove newline from file line
+                    if (strcmp(name, existing_name) == 0){
+                        printf("Username already exists");
+                        getchar();
+                        username_exists = true;
+                        break;
+                    }
+                }
+                if(!username_exists){
+                    fprintf(fptr, "%s\n", name);
+                }
+                fclose(fptr);
+                break;
+            }
             case 2: {
-                printf("\nEnter your name: ");
+                printf("Enter your username: ");
                 getchar(); // Consume newline
                 fgets(name, sizeof(name), stdin);
                 name[strcspn(name, "\n")] = '\0'; 
@@ -66,11 +97,12 @@ void run_main_menu() {
                 getchar();
                 break;
             case 5:
-                printf("\nExiting the game...\n");
+                printf("Exiting the game...\n");
                 running = false;
                 break;
             default:
-                printf("\nInvalid choice. Please try again.\n");
+                printf("Invalid choice. Please try again.");
+                getchar();
         }
     }
 }
