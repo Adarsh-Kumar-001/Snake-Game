@@ -33,37 +33,34 @@ void display_main_menu() {
     printf("\n");
 }
 
-void run_main_menu() {
+const char* run_main_menu() {
     int choice;
     bool running = true;
-    char name[50]; // make this global
+    static char name[50];
 
-    while (running) { 
+    while (running){ 
         system("clear || cls");
         display_main_menu();
         printf("Enter your choice (1-5): ");
-        scanf("%d", &choice);
-        while(getchar() != '\n');
+        scanf("%d",&choice);
+        while(getchar()!='\n');
 
         switch(choice){
             case 1:{
                 printf("Enter your username: ");
-                fgets(name, sizeof(name), stdin);
-                name[strcspn(name, "\n")] = '\0';
-                // Check if username already exists
-                // if exists, then break
+                fgets(name,sizeof(name),stdin);
+                name[strcspn(name, "\n")]='\0';
                 FILE* fptr = fopen("data/usernames.txt", "a+");
                 if(fptr == NULL){
                     printf("Error opening usernames.txt!");
                     break;
                 }
-                rewind(fptr); // To bring the pointer to the start of the file
+                rewind(fptr);
                 
-                // Scanning the usernames for existing user
                 bool username_exists = false;
                 char existing_name[100];
                 while(fgets(existing_name, sizeof(existing_name), fptr) != NULL){
-                    existing_name[strcspn(existing_name, "\n")] = '\0'; // Remove newline from file line
+                    existing_name[strcspn(existing_name, "\n")] = '\0';
                     if (strcmp(name, existing_name) == 0){
                         printf("Username already exists");
                         getchar();
@@ -73,37 +70,65 @@ void run_main_menu() {
                 }
                 if(!username_exists){
                     fprintf(fptr, "%s\n", name);
+                    printf("New user added");
                 }
                 fclose(fptr);
                 break;
             }
             case 2: {
                 printf("Enter your username: ");
-                getchar(); // Consume newline
-                fgets(name, sizeof(name), stdin);
-                name[strcspn(name, "\n")] = '\0'; 
+                fgets(name,sizeof(name),stdin);
+                name[strcspn(name, "\n")] = '\0';             
+                FILE* fptr = fopen("data/usernames.txt", "r");
+                if (fptr == NULL) {
+                    printf("Error opening usernames.txt!\n");
+                    break;
+                }
+                bool user_found = false;
+                char existing_name[100];
+            
+                while(fgets(existing_name,sizeof(existing_name),fptr)!=NULL){
+                    existing_name[strcspn(existing_name,"\n")]='\0';
+                    if (strcmp(name,existing_name)==0){
+                        user_found = true;
+                        running= false;
+                        break;
+                    }
+                }
+                fclose(fptr);
+            
+                if (!user_found){
+                    printf("User does not exist. Press Enter to continue...");
+                    getchar();
+                }
                 break;
             }
-            case 3:
+            case 3: {
                 printf("\n");
                 print_centered("LEADERBOARD");
                 printf("\n");
                 break;
-            case 4:
+            }
+            case 4:{
                 system("clear || cls");
                 about_developers_window();
                 printf("Press <Enter> to go back to Main Menu...");
                 while (getchar() != '\n');
                 getchar();
                 break;
-            case 5:
+            }
+            case 5:{
                 printf("Exiting the game...\n");
+                return '\0';
                 running = false;
                 break;
-            default:
+            }
+            default:{
                 printf("Invalid choice. Please try again.");
                 getchar();
+            }
         }
     }
+return name;    
 }
 
