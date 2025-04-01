@@ -1,13 +1,11 @@
 #include "../include/main_menu.h"
 #include "../include/game.h"
 #include "../include/scores.h"
+#include <stdio.h>
 
 int main() {
-    const char* username=run_main_menu();
-    if(username){
-        int score=run_game();
-        updatehighscore(username,score);
-    }
-    return 0;
+    run_main_menu();
+    run_game();
+        //updatehighscore(username,score);
+return 0;
 }
-

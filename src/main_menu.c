@@ -4,14 +4,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-void about_developers_window() {
-    print_centered("ABOUT DEVELOPERS");
-    
-    printf("Roshan (Team Leader)\n1. ...\n2. ...\n\n");
-    printf("Adarsh Kumar\n1. ...\n2. ...\n\n");
-    printf("Arnav Amrit\n1. ...\n2. ...\n\n");
-}
-
 void print_centered(const char *text) {
     int len = strlen(text);
     int spaces = (WIDTH - len) / 2;
@@ -25,10 +17,10 @@ void display_main_menu() {
     print_centered("=== SNAKE GAME ===");
     printf("\n");
 
-    print_centered("New User");
     print_centered("Existing User");
+    print_centered("New User");
     print_centered("Leaderboard");
-    print_centered("About Developers");
+    print_centered("How To Play");
     print_centered("Exit");
     printf("\n");
 }
@@ -46,7 +38,36 @@ const char* run_main_menu() {
         while(getchar()!='\n');
 
         switch(choice){
-            case 1:{
+            
+            case 1: {
+                printf("Enter your username: ");
+                fgets(name,sizeof(name),stdin);
+                name[strcspn(name, "\n")] = '\0';             
+                FILE* fptr = fopen("data/usernames.txt", "r");
+                if (fptr == NULL) {
+                    printf("Error opening usernames.txt!\n");
+                    break;
+                }
+                bool user_found = false;
+                char existing_name[100];
+            
+                while(fgets(existing_name,sizeof(existing_name),fptr)!=NULL){
+                    existing_name[strcspn(existing_name,"\n")]='\0';
+                    if (strcmp(name,existing_name)==0){
+                        user_found = true;
+                        running= false;
+                        break;
+                    }
+                }
+                fclose(fptr);
+            
+                if (!user_found){
+                    printf("User does not exist. Press Enter to continue...");
+                    getchar();
+                }
+                break;
+            }
+            case 2:{
                 printf("Enter your username: ");
                 fgets(name,sizeof(name),stdin);
                 name[strcspn(name, "\n")]='\0';
@@ -75,34 +96,6 @@ const char* run_main_menu() {
                 fclose(fptr);
                 break;
             }
-            case 2: {
-                printf("Enter your username: ");
-                fgets(name,sizeof(name),stdin);
-                name[strcspn(name, "\n")] = '\0';             
-                FILE* fptr = fopen("data/usernames.txt", "r");
-                if (fptr == NULL) {
-                    printf("Error opening usernames.txt!\n");
-                    break;
-                }
-                bool user_found = false;
-                char existing_name[100];
-            
-                while(fgets(existing_name,sizeof(existing_name),fptr)!=NULL){
-                    existing_name[strcspn(existing_name,"\n")]='\0';
-                    if (strcmp(name,existing_name)==0){
-                        user_found = true;
-                        running= false;
-                        break;
-                    }
-                }
-                fclose(fptr);
-            
-                if (!user_found){
-                    printf("User does not exist. Press Enter to continue...");
-                    getchar();
-                }
-                break;
-            }
             case 3: {
                 printf("\n");
                 print_centered("LEADERBOARD");
@@ -111,7 +104,13 @@ const char* run_main_menu() {
             }
             case 4:{
                 system("clear || cls");
-                about_developers_window();
+                
+                print_centered("HOW TO PLAY");
+                
+                printf("Roshan (Team Leader)\n1. ...\n2. ...\n\n");
+                printf("Adarsh Kumar\n1. ...\n2. ...\n\n");
+                printf("Arnav Amrit\n1. ...\n2. ...\n\n");
+                
                 printf("Press <Enter> to go back to Main Menu...");
                 while (getchar() != '\n');
                 getchar();
@@ -119,9 +118,8 @@ const char* run_main_menu() {
             }
             case 5:{
                 printf("Exiting the game...\n");
-                return '\0';
                 running = false;
-                break;
+                exit(0);
             }
             default:{
                 printf("Invalid choice. Please try again.");

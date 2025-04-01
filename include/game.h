@@ -25,6 +25,6 @@ void initGame();
 void PrintGame();
 void updateGame();
 void directioninput();
-int run_game();
+void run_game();
 
 #endif
