@@ -62,13 +62,13 @@ void printGame(){
             if(y == HEIGHT+2)   mvprintw(y, x, "-");
             
             // Fixed coordinates
-            if(x == 0 && y == HEIGHT)   mvprintw(HEIGHT, 0, "|");
-            if(x == 0 && y == HEIGHT+1) mvprintw(HEIGHT+1, 0, "|");
-            if(x == WIDTH-1 && y == HEIGHT) mvprintw(HEIGHT, WIDTH-1, "|");
-            if(x == WIDTH-1 && y == HEIGHT+1)   mvprintw(HEIGHT+1, WIDTH-1, "|");
+            if(x == 0 && y == HEIGHT)   mvprintw(y, x, "|");
+            if(x == 0 && y == HEIGHT+1) mvprintw(y, x, "|");
+            if(x == WIDTH-1 && y == HEIGHT) mvprintw(y, x, "|");
+            if(x == WIDTH-1 && y == HEIGHT+1)   mvprintw(y, x, "|");
         }
     }
-    
+
     // PRINTING THE SNAKE
     for (int i=0;i<snake.length;i++){
         if(i==0) mvprintw(snake.body[i].y+2,snake.body[i].x,"@");
