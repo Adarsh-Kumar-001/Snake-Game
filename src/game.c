@@ -163,7 +163,7 @@ void run_game(const char* user){
         endwin(); // to return to console (ncurses function)
 
         printf("\nGame Over! Your Score: %d\n", score);
-        updatehighscore(user, score);
+        updatehighscore(user, score); // Also, print if new highscore
 
         printf("Do you want to play again? (Y/N): ");
         scanf(" %c", &choice);
