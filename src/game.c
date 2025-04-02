@@ -33,7 +33,7 @@ void initGame(){
 
     // SNAKE DEFAULT PROPERTIES
     snake.length = 1;
-    snake.direction = 'D'; // Right
+    snake.direction = 'l'; // Right
     snake.body[0].x = WIDTH/2; // Initial x coordinate of snake at center
     snake.body[0].y = HEIGHT/2; // Initial y coordinate of snake at center
 
@@ -89,10 +89,10 @@ void updateGame(){
     }
 
     switch (snake.direction){
-        case 'W': snake.body[0].y--; break;
-        case 'S': snake.body[0].y++; break;
-        case 'A': snake.body[0].x--; break;
-        case 'D': snake.body[0].x++; break;
+        case 'k': snake.body[0].y--; break;
+        case 'j': snake.body[0].y++; break;
+        case 'h': snake.body[0].x--; break;
+        case 'l': snake.body[0].x++; break;
     }
 
     if (snake.body[0].x==0 || snake.body[0].x==WIDTH - 1 ||
@@ -115,23 +115,23 @@ void updateGame(){
     }
 }
 
-void directioninput(){
-    char dir=getch();
-    switch (dir){
-        case 'w': 
-            if (snake.direction!='S' && snake.direction!='W') snake.direction='W'; 
+void directionInput(){
+    char dir = getch();
+    switch(dir){
+        case 'k': 
+            if (snake.direction != 'k' && snake.direction != 'j') snake.direction = 'k'; 
             break;
-        case 's': 
-            if (snake.direction!='W' && snake.direction!='S') snake.direction='S';
+        case 'j': 
+            if (snake.direction != 'j' && snake.direction != 'k') snake.direction = 'j';
             break;
-        case 'a': 
-            if (snake.direction!='D' && snake.direction!='A') snake.direction='A';
+        case 'h': 
+            if (snake.direction != 'h' && snake.direction != 'l') snake.direction = 'h';
             break;
-        case 'd':
-            if (snake.direction!='A' && snake.direction!='D') snake.direction='D';
+        case 'l':
+            if (snake.direction != 'l' && snake.direction != 'h') snake.direction = 'l';
             break;
         case 'p': 
-            paused=!paused;
+            paused = !paused;
             break;
         case 'q':
             running = 0;
@@ -144,7 +144,7 @@ void run_game(const char* user){
         initGame(); // Applies default settings for the game
         while(running){
             printGame(); // Prints Board, Snake and Fruit
-            directioninput();
+            directionInput();
             updateGame();
             usleep(100000);
         }
