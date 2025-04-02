@@ -9,18 +9,11 @@
 #define MAX_USERS 100 // no. of lines
 
 void updatehighscore(const char *user, uint16_t curr_score) {
-    // ensure user exists in usernames.txt file (valid user check)
-    // reuse the same code used in case 1 of switch-case in main_menu.c
-
-
 
     FILE *file = fopen("data/highscores.csv", "r");
     if(!file){  // Assuming first user registers their score
         // make a new file
-
-
-
-        return;
+        fopen("data/highscores.csv", "w+");
     }
 
     char lines[MAX_USERS][MAX_LINE_LENGTH];
@@ -98,11 +91,44 @@ void updatehighscore(const char *user, uint16_t curr_score) {
     }
 }
 
-
-
 /*
 NOTE:
     tempscore is highscore of tempuser in highscore.csv
     "%48[^,],%5hu": read name upto 48 characters not including ','
                     read highscore upto 5 characters long (as max value of highscore supported is 10000)
+*/
+/*
+typedef struct {
+    char name[50];
+    uint16_t score;
+} Player;
+
+void printLeaderboard() {
+    Player players[MAX_USERS];
+    int count = 0;
+    FILE *file = fopen("data/highscores.csv", "r");
+    if (!file) { printf("error"); }
+        while (fscanf(file, "%48[^,],%5hu", players[count].name, &players[count].score) == 2 && count < MAX_USERS) {
+            count++;
+        }
+        fclose(file);
+
+    // Sort players by score (descending)
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (players[j].score > players[i].score) {
+                Player temp = players[i];
+                players[i] = players[j];
+                players[j] = temp;
+            }
+        }
+    }
+
+    // Print leaderboard
+    printf("\n=== Leaderboard ===\n");
+    for (int i = 0; i < count; i++) {
+        printf("%d. %s - %d\n", i + 1, players[i].name, players[i].score);
+    }
+}
+
 */

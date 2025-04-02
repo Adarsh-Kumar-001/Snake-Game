@@ -1,8 +1,11 @@
 #include "../include/main_menu.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+
+#define MAX_USERS 100
 
 void print_centered(const char *text) {
     int len = strlen(text);
@@ -21,7 +24,6 @@ void display_main_menu() {
     print_centered("New User");
     print_centered("Leaderboard");
     print_centered("How To Play");
-    print_centered("About Developers");
     print_centered("Exit");
     printf("\n");
 }
@@ -34,7 +36,7 @@ const char* run_main_menu() {
     while (running){ 
         system("clear || cls");
         display_main_menu();
-        printf("Enter your choice (1-6): ");
+        printf("Enter your choice (1-5): ");
         scanf("%d",&choice);
         while(getchar()!='\n');
 
@@ -97,9 +99,39 @@ const char* run_main_menu() {
                 break;
             }
             case 3: {
-                printf("\n");
-                print_centered("LEADERBOARD");
-                printf("\n");
+                system("clear || cls");
+                
+                typedef struct {
+                    char name[50];
+                    int score;
+                } Player;
+                
+                Player players[MAX_USERS];
+                int count = 0;
+                FILE *file = fopen("data/highscores.csv", "r");
+                while (fscanf(file, " %48[^,],%d", players[count].name, &players[count].score) == 2 && count < MAX_USERS) {
+                    count++;
+                    }
+                fclose(file);
+                
+                // Sort players by score (descending)
+                for (int i = 0; i < count - 1; i++) {
+                    for (int j = i + 1; j < count; j++) {
+                        if (players[j].score > players[i].score) {
+                            Player temp = players[i];
+                            players[i] = players[j];
+                            players[j] = temp;
+                        }
+                    }
+                }
+                
+                // Print leaderboard
+                print_centered("\n=== Leaderboard ===\n");
+                for (int i = 0; i < count; i++) {
+                    printf("%d. %s - %d\n", i + 1, players[i].name, players[i].score);
+                }
+                printf("Press <Enter> to go back to Main Menu...");
+                while (getchar() != '\n');
                 break;
             }
             case 4:{
@@ -121,18 +153,6 @@ const char* run_main_menu() {
                 break;
             }
             case 5:{
-                system("clear || cls");                
-                print_centered("About Devlopers");
-                
-                printf("Roshan (Team Leader)\n1. ...\n2. ...\n\n");
-                printf("Adarsh Kumar\n1. ...\n2. ...\n\n");
-                printf("Arnav Amrit\n1. ...\n2. ...\n\n");
-                
-                printf("Press <Enter> to go back to Main Menu...");
-                while (getchar() != '\n');
-                break;
-            }
-            case 6:{
                 printf("Exiting the game...\n");
                 running = false;
                 exit(0);
