@@ -127,6 +127,6 @@ const char* run_main_menu() {
             }
         }
     }
-return name;    
+return name;
 }
 
