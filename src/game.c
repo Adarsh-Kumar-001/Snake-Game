@@ -10,14 +10,13 @@
 
 #define WIDTH  45
 #define HEIGHT 25
-#define MAX_LENGTH 1000
+#define MAX_LENGTH 1000 // max length of snake body
 
 Snake snake;
 coordinates fruit;
 uint16_t score; // Range: 0 to 65535
 bool running;
 bool paused;
-char ch;
 
 void initGame(){
     // ncurses FUNCTIONS
@@ -82,79 +81,93 @@ void printGame(){
 }
 
 void updateGame(){
-    if (paused) return;
+    if(paused) return;
 
-    for (int i=snake.length-1;i>0;i--){
-        snake.body[i]=snake.body[i-1];
-    }
+    /////////////////////////////////////////////////////////////
+    //                      UPDATE SNAKE
+    /////////////////////////////////////////////////////////////
 
-    switch (snake.direction){
+    // MAKE THE BODY ELEMENT FOLLOW ITS LEADING ELEMENT
+    for(int i = snake.length-1; i > 0; i--)
+        snake.body[i] = snake.body[i-1];
+
+    // SET THE NEW SNAKE HEAD DIRECTION
+    switch(snake.direction){
         case 'k': snake.body[0].y--; break;
         case 'j': snake.body[0].y++; break;
         case 'h': snake.body[0].x--; break;
         case 'l': snake.body[0].x++; break;
     }
 
-    if (snake.body[0].x==0 || snake.body[0].x==WIDTH - 1 ||
-        snake.body[0].y==-1 || snake.body[0].y==HEIGHT){
-        running=0;
-    }
+    /////////////////////////////////////////////////////////////
+    //                      CHECK COLLISIONS
+    /////////////////////////////////////////////////////////////
 
-    for (int i=1;i<snake.length;i++){
-        if (snake.body[0].x==snake.body[i].x && snake.body[0].y==snake.body[i].y){
+    // COLLISION WITH WALLS CHECK
+    if(snake.body[0].x == 0 || snake.body[0].x == WIDTH - 1 ||
+        snake.body[0].y == -1 || snake.body[0].y == HEIGHT)
+        running=false;
+    
+    // COLLISION WITH ITSELF CHECK
+    for(int i = 1; i < snake.length; i++){
+        if (snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y){
             running=0;
         }
     }
 
-    if (snake.body[0].x == fruit.x && snake.body[0].y == fruit.y){
+    /////////////////////////////////////////////////////////////
+    //                      UPDATE SCORE
+    /////////////////////////////////////////////////////////////
+    if(snake.body[0].x == fruit.x && snake.body[0].y == fruit.y){
         score += 10;
-        if (snake.length<MAX_LENGTH)snake.length++;
-
-        fruit.x= rand()%(WIDTH-2)+1;
-        fruit.y= rand()%(HEIGHT-2)+1;
+        if(snake.length<MAX_LENGTH) snake.length++; // to prevent overflow
+        fruit.x = rand()%(WIDTH-2) + 1;
+        fruit.y = rand()%(HEIGHT-2) + 1;
     }
 }
 
-void directionInput(){
+void keyboardInput(){
     char dir = getch();
     switch(dir){
-        case 'k': 
+        case 'k': // up
             if (snake.direction != 'k' && snake.direction != 'j') snake.direction = 'k'; 
             break;
-        case 'j': 
+        case 'j': // down
             if (snake.direction != 'j' && snake.direction != 'k') snake.direction = 'j';
             break;
-        case 'h': 
+        case 'h': // left
             if (snake.direction != 'h' && snake.direction != 'l') snake.direction = 'h';
             break;
-        case 'l':
+        case 'l': // right
             if (snake.direction != 'l' && snake.direction != 'h') snake.direction = 'l';
             break;
-        case 'p': 
+        case 'p': // Toggle Pause and Play
             paused = !paused;
             break;
-        case 'q':
-            running = 0;
+        case 'q': // quit game
+            running = false;
             break;
     }
 }
 
 void run_game(const char* user){
+    char choice;
     do{
         initGame(); // Applies default settings for the game
         while(running){
             printGame(); // Prints Board, Snake and Fruit
-            directionInput();
+            keyboardInput(); // Takes the user input
             updateGame();
             usleep(100000);
         }
-        endwin();
+        endwin(); // to return to console (ncurses function)
+
         printf("\nGame Over! Your Score: %d\n",score);
         updatehighscore(user,score);
 
         printf("Do you want to play again? (Y/N): ");
-        scanf(" %c",&ch);
-    }while (ch=='y' || ch == 'Y');
+        scanf(" %c", &choice);
+    }while(choice == 'y' || choice == 'Y');
 
     printf("Exiting the game ...\n");
 }
