@@ -20,6 +20,7 @@ void display_main_menu() {
     print_centered("Existing User");
     print_centered("New User");
     print_centered("Leaderboard");
+    print_centered("How To Play");
     print_centered("About Developers");
     print_centered("Exit");
     printf("\n");
@@ -33,7 +34,7 @@ const char* run_main_menu() {
     while (running){ 
         system("clear || cls");
         display_main_menu();
-        printf("Enter your choice (1-5): ");
+        printf("Enter your choice (1-6): ");
         scanf("%d",&choice);
         while(getchar()!='\n');
 
@@ -104,7 +105,24 @@ const char* run_main_menu() {
             case 4:{
                 system("clear || cls");
                 
-                print_centered("HOW TO PLAY");
+                print_centered("How To Play");
+                printf("1. Move the snake with h-j-k-l controls\n");
+                printf("    Up    : k\n");
+                printf("    Down  : j\n");
+                printf("    Left  : h\n");
+                printf("    Right : l\n");
+                printf("2. The snake cannot move in reverse direction.\n");
+                printf("3. Eat the food (+) to grow longer and score up.\n");
+                printf("4. When the snake collides with the boundary or itself, the game ends.\n");
+                printf("5. Press 'p' to pause/play the game.\n");
+                printf("6. Press 'q' to quit the game.\n\n");
+                printf("Press <Enter> to go back to Main Menu...");
+                while (getchar() != '\n');
+                break;
+            }
+            case 5:{
+                system("clear || cls");                
+                print_centered("About Devlopers");
                 
                 printf("Roshan (Team Leader)\n1. ...\n2. ...\n\n");
                 printf("Adarsh Kumar\n1. ...\n2. ...\n\n");
@@ -112,10 +130,9 @@ const char* run_main_menu() {
                 
                 printf("Press <Enter> to go back to Main Menu...");
                 while (getchar() != '\n');
-                getchar();
                 break;
             }
-            case 5:{
+            case 6:{
                 printf("Exiting the game...\n");
                 running = false;
                 exit(0);
