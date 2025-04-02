@@ -20,21 +20,31 @@ bool paused;
 char ch;
 
 void initGame(){
+    // ncurses functions
     initscr();
     noecho();
     curs_set(0);
     keypad(stdscr, TRUE);
     timeout(100); 
 
-    running=true;
-    score=0;
-    paused=false;
-    snake.length=1;
-    snake.direction='D';
-    snake.body[0].x=1;
-    snake.body[0].y=2;
-    fruit.x=rand()%(WIDTH-2)+1;
-    fruit.y=rand()%(HEIGHT-2)+1;
+    /////////////////////////////////////////////////////////////////
+    //                      GAME SETTINGS
+    /////////////////////////////////////////////////////////////////
+
+    // SNAKE DEFAULT PROPERTIES
+    snake.length = 1;
+    snake.direction = 'D'; // Right
+    snake.body[0].x = WIDTH/2; // Initial x coordinate of snake
+    snake.body[0].y = HEIGHT/2; // Initial y coordinate of snake
+
+    // FRUIT PROPERTIES
+    fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
+    fruit.y = rand()%(HEIGHT-2) + 1; // Random fruit spawn y-coordinate
+
+    // MISC.
+    running = true;
+    paused = false;
+    score = 0;
 }
 
 void PrintGame(){

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #define MAX_LINE_LENGTH 50
 #define MAX_USERS 100
@@ -16,10 +17,11 @@ void updatehighscore(const char *user, uint16_t curr_score) {
 
     char lines[MAX_USERS][MAX_LINE_LENGTH];
     char tempuser[MAX_LINE_LENGTH];
-    int tempscore, found = 0, count = 0;
+    uint16_t tempscore, count = 0;
+    bool found = false;
 
     while (fgets(lines[count], MAX_LINE_LENGTH, file)) {
-        if (sscanf(lines[count], "%49[^,],%d", tempuser, &tempscore) != 2) {
+        if (sscanf(lines[count], "%49[^,],%hu", tempuser, &tempscore) != 2) {
             continue;
         }
 
