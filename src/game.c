@@ -1,4 +1,6 @@
 #include "../include/game.h"
+#include "../include/scores.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
@@ -52,7 +54,6 @@ void PrintGame(){
     mvprintw(fruit.y+2,fruit.x,"+");
     refresh();
 }
-
 
 void updateGame(){
     if (paused) return;
@@ -112,7 +113,7 @@ void directioninput(){
     }
 }
 
-void run_game(){
+void run_game(const char* user){
     do 
     {
         initGame();
@@ -125,6 +126,7 @@ void run_game(){
         }
         endwin();
         printf("\nGame Over! Your Score: %d\n",score);
+        updatehighscore(user,score);
         printf("Do you want to play again? (Y/N): ");
         scanf(" %c",&ch);
     } while (ch=='y' || ch == 'Y');
