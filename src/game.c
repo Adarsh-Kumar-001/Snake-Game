@@ -162,12 +162,12 @@ void run_game(const char* user){
         }
         endwin(); // to return to console (ncurses function)
 
-        printf("\nGame Over! Your Score: %d\n",score);
-        updatehighscore(user,score);
+        printf("\nGame Over! Your Score: %d\n", score);
+        updatehighscore(user, score);
 
         printf("Do you want to play again? (Y/N): ");
         scanf(" %c", &choice);
     }while(choice == 'y' || choice == 'Y');
 
-    printf("Exiting the game ...\n");
+    printf("Exiting the game...\n");
 }

@@ -5,50 +5,69 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define MAX_LINE_LENGTH 50
-#define MAX_USERS 100
+#define MAX_LINE_LENGTH 50 // no. of characters in each line
+#define MAX_USERS 100 // no. of lines
 
 void updatehighscore(const char *user, uint16_t curr_score) {
+    // ensure user exists in usernames.txt file (valid user check)
+    // reuse the same code used in case 1 of switch-case in main_menu.c
+
+
+
     FILE *file = fopen("data/highscores.csv", "r");
-    if (!file) {
-        perror("Error opening highscores.csv");
+    if(!file){  // Assuming first user registers their score
+        // make a new file
+
+
+
         return;
     }
 
     char lines[MAX_USERS][MAX_LINE_LENGTH];
-    char tempuser[MAX_LINE_LENGTH];
-    uint16_t tempscore, count = 0;
-    bool found = false;
+    
+    uint16_t tempscore, line_no = 0; // tempscore should be prev_highscore?
+    bool user_found = false;
 
-    while (fgets(lines[count], MAX_LINE_LENGTH, file)) {
-        if (sscanf(lines[count], "%49[^,],%hu", tempuser, &tempscore) != 2) {
+    ///////////////////////////////////////////////////////////////////
+    // CHECK IF USER HAS PRE-EXISTING HIGHSCORE IN highscore.csv
+    ///////////////////////////////////////////////////////////////////
+    while(fgets(lines[line_no], MAX_LINE_LENGTH, file)){    // go through each user in highscore.csv
+        char tempuser[MAX_LINE_LENGTH];
+        if(sscanf(lines[line_no], "%48[^,],%5hu", tempuser, &tempscore) != 2)
             continue;
-        }
 
-        if (strcmp(tempuser, user) == 0) {
-            found = 1;
-            if (curr_score > tempscore) {
+        if(strcmp(tempuser, user) == 0){ // if current user found in highscores.csv
+            user_found = true;
+            // new highscore created
+            if(curr_score > tempscore){
                 printf("You made a new high score: %d\n", curr_score);
-                snprintf(lines[count], MAX_LINE_LENGTH, "%s,%d\n", user, curr_score);
-            } else {
-                printf("Your high score is %s: %d\n", user, tempscore);
+                // store highscore in lines array
+                snprintf(lines[line_no], MAX_LINE_LENGTH, "%s,%d\n", user, curr_score);
             }
+            else    // not a highscore
+                printf("Your high score is %s: %d\n", user, tempscore);
         }
-        count++;
-        if (count >= MAX_USERS) break; 
+        line_no++;
+        if(line_no >= MAX_USERS) break; 
     }
     fclose(file);
 
-    if (!found) {
+
+
+    if (!user_found) {
         printf("You made a new high score: %d\n", curr_score);
-        if (count < MAX_USERS) {
-            snprintf(lines[count], MAX_LINE_LENGTH, "%s,%d\n", user, curr_score);
-            count++;
+        if (line_no < MAX_USERS) {
+            snprintf(lines[line_no], MAX_LINE_LENGTH, "%s,%d\n", user, curr_score);
+            line_no++;
         } else {
             printf("Error: High score list is full!\n");
             return;
         }
     }
+
+
+
+
 
     FILE *tempFile = fopen("data/highscores_temp.csv", "w");
     if (!tempFile) {
@@ -56,7 +75,7 @@ void updatehighscore(const char *user, uint16_t curr_score) {
         return;
     }
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < line_no; i++) {
         fputs(lines[i], tempFile);
     }
     fclose(tempFile);
