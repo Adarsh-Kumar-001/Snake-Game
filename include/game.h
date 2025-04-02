@@ -25,7 +25,7 @@ extern bool running;
 extern bool paused;
 
 void initGame();
-void PrintGame();
+void printGame();
 void updateGame();
 void directioninput();
 void run_game(const char*);

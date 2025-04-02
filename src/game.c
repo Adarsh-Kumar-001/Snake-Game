@@ -20,7 +20,7 @@ bool paused;
 char ch;
 
 void initGame(){
-    // ncurses functions
+    // ncurses FUNCTIONS
     initscr();
     noecho();
     curs_set(0);
@@ -34,8 +34,8 @@ void initGame(){
     // SNAKE DEFAULT PROPERTIES
     snake.length = 1;
     snake.direction = 'D'; // Right
-    snake.body[0].x = WIDTH/2; // Initial x coordinate of snake
-    snake.body[0].y = HEIGHT/2; // Initial y coordinate of snake
+    snake.body[0].x = WIDTH/2; // Initial x coordinate of snake at center
+    snake.body[0].y = HEIGHT/2; // Initial y coordinate of snake at center
 
     // FRUIT PROPERTIES
     fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
@@ -47,23 +47,37 @@ void initGame(){
     score = 0;
 }
 
-void PrintGame(){
+void printGame(){
     clear();
-    
+
+    // DISPLAY THE SCORE
     mvprintw(0,(WIDTH/2),"Score: %d",score);
-    
-    for (int i=0;i<WIDTH;i++)  mvprintw(1,i,"_");
-    for (int i=2;i<HEIGHT+2;i++){
-        mvprintw(i,0,"|");
-        mvprintw(i,WIDTH-1,"|");
+
+    // PRINTING THE BOARD
+    for(int y = 0; y <= HEIGHT+2; y++){
+        for(int x = 0; x < WIDTH; x++){
+            if(y == 1)  mvprintw(y, x, "_");
+            if(x == 0 && y >= 2 && y < HEIGHT)  mvprintw(y, x, "|");
+            if(x == WIDTH-1 && y >= 2 && y < HEIGHT)    mvprintw(y, x, "|");
+            if(y == HEIGHT+2)   mvprintw(y, x, "-");
+            
+            // Fixed coordinates
+            if(x == 0 && y == HEIGHT)   mvprintw(HEIGHT, 0, "|");
+            if(x == 0 && y == HEIGHT+1) mvprintw(HEIGHT+1, 0, "|");
+            if(x == WIDTH-1 && y == HEIGHT) mvprintw(HEIGHT, WIDTH-1, "|");
+            if(x == WIDTH-1 && y == HEIGHT+1)   mvprintw(HEIGHT+1, WIDTH-1, "|");
+        }
     }
-    for (int i=0;i<WIDTH;i++)  mvprintw(HEIGHT+2,i,"-");
     
+    // PRINTING THE SNAKE
     for (int i=0;i<snake.length;i++){
         if(i==0) mvprintw(snake.body[i].y+2,snake.body[i].x,"@");
         else mvprintw(snake.body[i].y+2,snake.body[i].x,"o");
     }
+
+    // PRINTING THE FRUIT
     mvprintw(fruit.y+2,fruit.x,"+");
+
     refresh();
 }
 
@@ -127,17 +141,17 @@ void directioninput(){
 
 void run_game(const char* user){
     do{
-        initGame();
-    
-        while (running) {
-        PrintGame();
-        directioninput();
-        updateGame();
-        usleep(100000);
+        initGame(); // Applies default settings for the game
+        while(running){
+            printGame(); // Prints Board, Snake and Fruit
+            directioninput();
+            updateGame();
+            usleep(100000);
         }
         endwin();
         printf("\nGame Over! Your Score: %d\n",score);
         updatehighscore(user,score);
+
         printf("Do you want to play again? (Y/N): ");
         scanf(" %c",&ch);
     }while (ch=='y' || ch == 'Y');
