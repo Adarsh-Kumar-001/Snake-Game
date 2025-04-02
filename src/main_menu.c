@@ -20,7 +20,7 @@ void display_main_menu() {
     print_centered("Existing User");
     print_centered("New User");
     print_centered("Leaderboard");
-    print_centered("How To Play");
+    print_centered("About Developers");
     print_centered("Exit");
     printf("\n");
 }
@@ -28,7 +28,7 @@ void display_main_menu() {
 const char* run_main_menu() {
     int choice;
     bool running = true;
-    static char name[50];
+    static char name[50]; // static variable to make the value persist even after function exits
 
     while (running){ 
         system("clear || cls");
@@ -38,7 +38,6 @@ const char* run_main_menu() {
         while(getchar()!='\n');
 
         switch(choice){
-            
             case 1: {
                 printf("Enter your username: ");
                 fgets(name,sizeof(name),stdin);

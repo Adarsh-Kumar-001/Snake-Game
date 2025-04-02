@@ -2,11 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #define MAX_LINE_LENGTH 50
 #define MAX_USERS 100
 
-void updatehighscore(const char *user, int curr_score) {
+void updatehighscore(const char *user, uint16_t curr_score) {
     FILE *file = fopen("data/highscores.csv", "r");
     if (!file) {
         perror("Error opening highscores.csv");

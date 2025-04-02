@@ -4,6 +4,8 @@
 #define MAX_LINE_LENGTH 50
 #define MAX_USERS 100
 
-void updatehighscore(const char* user,int curr_score);
+#include <stdint.h>
+
+void updatehighscore(const char* user,uint16_t curr_score);
 
 #endif

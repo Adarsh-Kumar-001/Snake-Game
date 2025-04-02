@@ -5,6 +5,9 @@
 #define HEIGHT 25
 #define MAX_LENGTH 1000
 
+#include <stdbool.h>
+#include <stdint.h>
+
 typedef struct {
     int x, y;
 }coordinates;
@@ -17,9 +20,9 @@ typedef struct {
 
 extern Snake snake;
 extern coordinates fruit;
-extern int score;
-extern int running;
-extern int paused;
+extern uint16_t score;
+extern bool running;
+extern bool paused;
 
 void initGame();
 void PrintGame();

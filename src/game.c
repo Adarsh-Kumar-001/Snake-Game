@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #define WIDTH  45
 #define HEIGHT 25
@@ -12,9 +14,9 @@
 
 Snake snake;
 coordinates fruit;
-int score;
-int running; 
-int paused;
+uint16_t score; // Range: 0 to 65535
+bool running;
+bool paused;
 char ch;
 
 void initGame(){
@@ -24,9 +26,9 @@ void initGame(){
     keypad(stdscr, TRUE);
     timeout(100); 
 
-    running=1;
+    running=true;
     score=0;
-    paused=0;
+    paused=false;
     snake.length=1;
     snake.direction='D';
     snake.body[0].x=1;
@@ -114,8 +116,7 @@ void directioninput(){
 }
 
 void run_game(const char* user){
-    do 
-    {
+    do{
         initGame();
     
         while (running) {
@@ -129,7 +130,7 @@ void run_game(const char* user){
         updatehighscore(user,score);
         printf("Do you want to play again? (Y/N): ");
         scanf(" %c",&ch);
-    } while (ch=='y' || ch == 'Y');
+    }while (ch=='y' || ch == 'Y');
 
     printf("Exiting the game ...\n");
 }
