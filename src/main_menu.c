@@ -7,7 +7,7 @@
 
 #define MAX_USERS 100
 
-void print_centered(const char *text) {
+void print_centered(const char *text){
     int len = strlen(text);
     int spaces = (WIDTH - len) / 2;
 
@@ -33,7 +33,7 @@ const char* run_main_menu() {
     bool running = true;
     static char name[50]; // static variable to make the value persist even after function exits
 
-    while (running){ 
+    while(running){ 
         system("clear || cls");
         display_main_menu();
         printf("Enter your choice (1-5): ");
@@ -41,6 +41,7 @@ const char* run_main_menu() {
         while(getchar()!='\n');
 
         switch(choice){
+            // EXISTING USER
             case 1: {
                 printf("Enter your username: ");
                 fgets(name,sizeof(name),stdin);
@@ -69,6 +70,7 @@ const char* run_main_menu() {
                 }
                 break;
             }
+            // REGISTER NEW USER
             case 2:{
                 printf("Enter your username: ");
                 fgets(name,sizeof(name),stdin);
@@ -98,6 +100,7 @@ const char* run_main_menu() {
                 fclose(fptr);
                 break;
             }
+            // SHOW LEADERBOARD
             case 3: {
                 system("clear || cls");
                 
@@ -134,6 +137,7 @@ const char* run_main_menu() {
                 while (getchar() != '\n');
                 break;
             }
+            // SHOW CONTROLS
             case 4:{
                 system("clear || cls");
                 
@@ -152,6 +156,7 @@ const char* run_main_menu() {
                 while (getchar() != '\n');
                 break;
             }
+            // EXIT THE GAME
             case 5:{
                 printf("Exiting the game...\n");
                 running = false;
@@ -163,6 +168,7 @@ const char* run_main_menu() {
             }
         }
     }
+
 return name;
 }
 

@@ -3,5 +3,5 @@
 
 int main() {
     const char* user=run_main_menu(); // displays main menu and returns username
-    run_game(user);
+    run_game(user); // starts the game
 }

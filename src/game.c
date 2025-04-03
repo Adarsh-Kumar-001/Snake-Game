@@ -25,7 +25,7 @@ void initGame(){
     noecho();
     curs_set(0);
     keypad(stdscr, TRUE);
-    timeout(100); 
+    timeout(100);
 
     /////////////////////////////////////////////////////////////////
     //                      GAME SETTINGS
@@ -108,12 +108,12 @@ void updateGame(){
     // COLLISION WITH WALLS CHECK
     if(snake.body[0].x == 0 || snake.body[0].x == WIDTH - 1 ||
         snake.body[0].y == -1 || snake.body[0].y == HEIGHT)
-        running=false;
+        running = false;
     
     // COLLISION WITH ITSELF CHECK
     for(int i = 1; i < snake.length; i++){
         if (snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y){
-            running=0;
+            running = false;
         }
     }
 
