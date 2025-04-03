@@ -7,6 +7,5 @@
 #include <stdint.h>
 
 void updatehighscore(const char* user,uint16_t curr_score);
-void printLeaderboard();
 
 #endif
