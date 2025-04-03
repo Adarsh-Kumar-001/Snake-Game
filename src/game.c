@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <ncurses.h>
 #include <unistd.h>
 #include <stdbool.h>
@@ -37,13 +38,14 @@ void initGame(){
     snake.body[0].y = HEIGHT/2; // Initial y coordinate of snake at center
 
     // FRUIT PROPERTIES
+    srand(time(NULL));
     fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
     fruit.y = rand()%(HEIGHT-2) + 1; // Random fruit spawn y-coordinate
 
     // MISC.
     running = true;
     paused = false;
-    score = 0;
+    score = 0;   
 }
 
 void printGame(){
