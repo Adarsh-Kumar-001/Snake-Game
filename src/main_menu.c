@@ -50,13 +50,13 @@ void print_Leaderboard(){
 
     typedef struct{
         char name[50];
-        int score;
+        uint16_t score;
     } Player;
 
     Player players[MAX_USERS];
     int count = 0;
     FILE *file = fopen("data/highscores.csv", "r");
-    while (fscanf(file, " %48[^,],%d", players[count].name, &players[count].score) == 2 && count < MAX_USERS){
+    while (fscanf(file, " %50[^,],%hu", players[count].name, &players[count].score) == 2 && count < MAX_USERS){
         count++;
     }
     fclose(file);
@@ -75,7 +75,7 @@ void print_Leaderboard(){
     // Print leaderboard
     print_centered("\n    Leaderboard    \n");
     for (int i = 0; i < count; i++) {
-        printf("%d. %s - %d\n", i + 1, players[i].name, players[i].score);
+        printf("%d. %s - %hu\n", i + 1, players[i].name, players[i].score);
     }
     printf("\n\nPress <Enter> to go back to Main Menu...");
 }

@@ -64,7 +64,7 @@ void printGame(){
     clear();
     
     // DISPLAY THE SCORE
-    mvprintw(0,(WIDTH/2),"Score: %d",score);
+    mvprintw(0,(WIDTH/2),"Score: %hu",score);
 
     // PRINTING THE BOARD
     for(int y = 0; y <= HEIGHT+2; y++){
@@ -95,7 +95,7 @@ void printGame(){
     for(int i = 0; i <= HEIGHT+2; i++){
         for(int j = 0; j < WIDTH; j++){
             bool printed = false;
-            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %d",score); printed = true; }    // DISPLAY THE SCORE
+            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %hu",score); printed = true; }    // DISPLAY THE SCORE
             if(i == 1) { printf("_"); printed = true; } 
             if(j == 0 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
             if(j == WIDTH-1 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
@@ -232,7 +232,7 @@ void run_game(const char* user){
         endwin(); // to return to console (ncurses function)
         #endif
 
-        printf("\nGame Over! Your Score: %d\n", score);
+        printf("\nGame Over!\n%s Your Score: %hu\n",user,score);
         updatehighscore(user, score); // Also, print if new highscore
 
         printf("Do you want to play again? (Y/N): ");
