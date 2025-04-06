@@ -1,11 +1,8 @@
 #include "../include/game.h"
 #include "../include/scores.h"
+#include "../include/common.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include<time.h>
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <ncurses.h>

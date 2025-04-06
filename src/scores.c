@@ -1,9 +1,5 @@
 #include "../include/scores.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include "../include/common.h"
 
 #define MAX_LINE_LENGTH 50 // no. of characters in each line
 #define MAX_USERS 100 // no. of lines
