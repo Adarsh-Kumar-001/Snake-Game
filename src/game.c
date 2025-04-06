@@ -46,9 +46,12 @@ void initGame(){
 
     // FRUIT PROPERTIES
     srand(time(NULL));
-    fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
-    fruit.y = rand()%(HEIGHT-2) + 1; // Random fruit spawn y-coordinate
-
+    do
+    {
+        fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
+        fruit.y = rand()%(HEIGHT-2) + 1; // Random fruit spawn y-coordinate
+    } while (snake.body[0].x == fruit.x && snake.body[0].y == fruit.y);
+    
     // MISC.
     running = true;
     paused = false;
@@ -157,10 +160,17 @@ void updateGame(){
     /////////////////////////////////////////////////////////////
     if(snake.body[0].x == fruit.x && snake.body[0].y == fruit.y){
         score += 10;
-        if(snake.length<MAX_LENGTH) snake.length++; // to prevent overflow
+        if(snake.length<MAX_LENGTH) snake.length++; // to prevent overflow   
         fruit.x = rand()%(WIDTH-2) + 1;
         fruit.y = rand()%(HEIGHT-2) + 1;
-    }
+        for (int i = 0; i < snake.length; i++) {  //if food is spawned on snake's body food will be respawned till when it is not on snake's body
+            if (snake.body[i].x == fruit.x && snake.body[i].y == fruit.y) {   
+                fruit.x = rand()%(WIDTH-2) + 1;
+                fruit.y = rand()%(HEIGHT-2) + 1;
+                i=0;
+            }
+        }
+    } 
 }
 
 void keyboardInput(){
