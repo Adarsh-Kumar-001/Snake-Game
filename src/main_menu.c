@@ -133,7 +133,7 @@ const char* run_main_menu() {
                 for (int i = 0; i < count; i++) {
                     printf("%d. %s - %d\n", i + 1, players[i].name, players[i].score);
                 }
-                printf("\n\nPress <Enter> to go back to Main Menu...");
+                printf("\nPress <Enter> to go back to Main Menu...");
                 while (getchar() != '\n');
                 break;
             }

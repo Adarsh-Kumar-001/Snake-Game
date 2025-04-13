@@ -8,18 +8,26 @@
 #include <stdint.h>
 
 #if defined(__linux__) || defined(__APPLE__)
-#include <ncurses.h>
-#include <unistd.h>
+    #include <ncurses.h>
+    #include <unistd.h>
+    #define sleep(ms) usleep(ms*1000)  // takes value in microseconds
 
 #elif defined(_WIN32)
-#include<windows.h>
-#include <conio.h>
+    #include <windows.h>
+    #include <conio.h>
+    #define sleep(ms) Sleep(ms)  // takes value in ms
 
 #endif
 
 #define WIDTH  45
 #define HEIGHT 25
 #define MAX_LENGTH 1000 // max length of snake body
+
+#if defined(__linux__) || defined(__APPLE__)
+    
+#elif defined(_WIN32)
+    
+#endif
 
 Snake snake;
 coordinates fruit;
@@ -29,12 +37,11 @@ bool paused;
 
 void initGame(){
     #if defined(__linux__) || defined(__APPLE__)
-    // ncurses FUNCTIONS (for Linux or macOS)
-    initscr();
-    noecho();
-    curs_set(0);
-    keypad(stdscr, TRUE);
-    timeout(100);
+        initscr();
+        noecho();
+        curs_set(0);
+        keypad(stdscr, TRUE);
+        timeout(100);
     #endif
 
     /////////////////////////////////////////////////////////////////
@@ -59,6 +66,10 @@ void initGame(){
 }
 
 void printGame(){
+    /////////////////////////////////////////////////////////////
+    //                      LINUX AND APPLE COMPATIBILITY
+    /////////////////////////////////////////////////////////////
+
     #if defined(__linux__) || defined(__APPLE__)
    
     clear();
@@ -70,16 +81,16 @@ void printGame(){
     for(int y = 0; y <= HEIGHT+2; y++){
         for(int x = 0; x < WIDTH; x++){
             if(y == 1)  mvprintw(y, x, "_");
+            if(y == HEIGHT+2)   mvprintw(y, x, "-");
             if(x == 0 && y >= 2 && y < HEIGHT+2)  mvprintw(y, x, "|");
             if(x == WIDTH-1 && y >= 2 && y < HEIGHT+2)    mvprintw(y, x, "|");
-            if(y == HEIGHT+2)   mvprintw(y, x, "-");
         }
     }
 
     // PRINTING THE SNAKE
-    for (int i=0;i<snake.length;i++){
-        if(i==0) mvprintw(snake.body[i].y+2,snake.body[i].x,"@");
-        else mvprintw(snake.body[i].y+2,snake.body[i].x,"o");
+    for (int i = 0;i < snake.length; i++){
+        if(i == 0) mvprintw(snake.body[i].y+2, snake.body[i].x, "@"); // head
+        else mvprintw(snake.body[i].y+2, snake.body[i].x, "o"); // body
     }
 
     // PRINTING THE FRUIT
@@ -87,8 +98,13 @@ void printGame(){
 
     refresh();
 
+
+    /////////////////////////////////////////////////////////////
+    //                      WINDOWS COMPATIBILITY
+    /////////////////////////////////////////////////////////////
+
+
     #elif defined(_WIN32)
-    // Alternative for Windows
     system("cls");
     
     // PRINTING THE BOARD
@@ -116,7 +132,8 @@ void printGame(){
             if(printed == false)  printf(" ");
         }
         printf("\n");
-    }    
+    }
+
     #endif
 }
 
@@ -167,24 +184,27 @@ void updateGame(){
 }
 
 void keyboardInput(){
-    char dir;
+    char dir = '\0';
 
     #if defined(__linux__) || defined(__APPLE__)
-    dir = getch();
-    
+        dir = getch();
+
     #elif defined(_WIN32)
-    int wait_time = 100; // 100 milliseconds
-
-    for(int i = 0; i < wait_time; i+=10){
-        if (_kbhit()) { // Check if a key is pressed
-            dir = _getch(); // Read the key
-            break;; // Exit after key press
+        int wait_time = 100; // 100 ms
+        for(int i = 0; i < wait_time; i += 10){
+            if(_kbhit()){
+                dir = _getch();
+                break;
+            }
+            Sleep(10); // wait 10ms and then again check if a key is pressed
         }
-        Sleep(10); // Wait 10ms and then again checks if a key is pressed
-    }
-
     #endif
     
+    // To prevent undefined behaviour in case of ERR (-1) from getch() if no key is pressed during timeout or default value in windows
+    if(dir == -1 || dir == '\0')    return;
+
+
+    // Save the current direction of the snake
     switch(dir){
         case 'k': // up
             if (snake.direction != 'k' && snake.direction != 'j') snake.direction = 'k'; 
@@ -215,14 +235,10 @@ void run_game(const char* user){
             printGame(); // Prints Board, Snake and Fruit
             keyboardInput(); // Takes the user input
             updateGame();
-            #if defined(__linux__) || defined(__APPLE__)
-            usleep(100000);  //pause execution 100 millisecond  (ncurses function)
-            #elif defined(_WIN32)
-            Sleep(100);  //pause execution 100 millisecond (windows.h function)
-            #endif
+            sleep(100);
         }
         #if defined(__linux__) || defined(__APPLE__)
-        endwin(); // to return to console (ncurses function)
+            endwin(); // to return to console (ncurses function)
         #endif
 
         printf("\nGame Over! Your Score: %d\n", score);
