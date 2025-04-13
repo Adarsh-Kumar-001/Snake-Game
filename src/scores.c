@@ -14,10 +14,8 @@ void updatehighscore(const char *user, uint16_t curr_score) {
     bool user_found = false;
 
     FILE *file = fopen("data/highscores.csv", "r");
-    if(!file){  // Assuming first user registers their score
-        // make a new file
-        fopen("data/highscores.csv", "w+");
-    }
+    if(!file)  // Assuming first user registers their score
+        fopen("data/highscores.csv", "w+"); // make a new file
 
     ////////////////////////////////////////////////////////////////////////////
     //      CHECK IF USER HAS PRE-EXISTING HIGHSCORE IN highscore.csv

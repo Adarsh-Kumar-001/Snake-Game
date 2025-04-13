@@ -1,8 +1,6 @@
 #include "../include/main_menu.h"
 #include "../include/common.h"
 
-#define MAX_USERS 100
-
 static char name[50]; // static variable to make the value persist even after function exits
 
 void print_centered(const char *text){
@@ -53,11 +51,35 @@ void print_Leaderboard(){
         uint16_t score;
     }Player;
 
-    Player players[MAX_USERS];
-    int count = 0;
     FILE *file = fopen("data/highscores.csv", "r");
-    while(fscanf(file, " %50[^,],%hu", players[count].name, &players[count].score) == 2 && count < MAX_USERS)
+    if(!file){
+        perror("Error opening highscores.csv");
+        return;
+    }
+
+    int capacity = 5; // Initial capacity, grow if needed
+    int count = 0;
+    Player *players = malloc(capacity * sizeof(Player));
+    if(!players){
+        perror("Memory allocation failed");
+        fclose(file);
+        return;
+    }
+
+    while(fscanf(file, " %50[^,],%hu", players[count].name, &players[count].score) == 2){
         count++;
+        if(count >= capacity){
+            capacity *= 2;
+            Player *temp = realloc(players, capacity * sizeof(Player));
+            if(!temp){
+                perror("Memory reallocation failed");
+                free(players);
+                fclose(file);
+                return;
+            }
+            players = temp;
+        }
+    }
     fclose(file);
 
     // Sort players by score (descending) using Bubble Sort
@@ -77,7 +99,11 @@ void print_Leaderboard(){
         printf("%d. %s - %hu\n", i + 1, players[i].name, players[i].score);
 
     printf("\n\nPress <Enter> to go back to Main Menu...");
+    getchar(); // Pause
+
+    free(players);
 }
+
 
 void print_HowToPlay(){
     system("clear || cls");
