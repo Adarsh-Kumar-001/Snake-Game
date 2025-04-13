@@ -2,6 +2,8 @@
     "files.associations": {
         "stdint.h": "c",
         "compare": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "main_menu.h": "c",
+        "game.h": "c"
     }
 }

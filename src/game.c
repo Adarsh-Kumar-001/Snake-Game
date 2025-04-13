@@ -94,7 +94,7 @@ void printGame(){
     }
 
     // PRINTING THE FRUIT
-    mvprintw(fruit.y+2,fruit.x,"+");
+    mvprintw(fruit.y+2, fruit.x, "+");
 
     refresh();
 
@@ -107,29 +107,31 @@ void printGame(){
     #elif defined(_WIN32)
     system("cls");
     
-    // PRINTING THE BOARD
     for(int i = 0; i <= HEIGHT+2; i++){
         for(int j = 0; j < WIDTH; j++){
-            bool printed = false;
-            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %hu",score); printed = true; }    // DISPLAY THE SCORE
-            if(i == 1) { printf("_"); printed = true; } 
-            if(j == 0 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
-            if(j == WIDTH-1 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
-            if(i == HEIGHT+2) { printf("-"); printed = true; }
+            bool print_spaces = true;
+            // DISPLAY THE SCORE
+            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %hu",score); print_spaces = false; }
+
+            // PRINTING THE BOARD
+            if(i == 1) { printf("_"); print_spaces = false; } 
+            if(j == 0 && i >= 2 && i < HEIGHT+2) { printf("|"); print_spaces = false; }
+            if(j == WIDTH-1 && i >= 2 && i < HEIGHT+2) { printf("|"); print_spaces = false; }
+            if(i == HEIGHT+2) { printf("-"); print_spaces = false; }
             
             // PRINTING THE SNAKE
-            for (int k=0;k<snake.length;k++){
+            for(int k = 0; k < snake.length; k++){
                 if(i == snake.body[k].y+2 && j == snake.body[k].x){
-                    (k==0) ?  printf("@") : printf("o") ;
-                    printed = true;
+                    (k == 0) ?  printf("@") : printf("o");
+                    print_spaces = false;
                 }
             }
             // PRINTING THE FRUIT
             if(i == fruit.y+2 && j == fruit.x) {
                 printf("+");
-                printed = true;
+                print_spaces = false;
             }
-            if(printed == false)  printf(" ");
+            if(print_spaces)  printf(" ");
         }
         printf("\n");
     }
@@ -167,9 +169,8 @@ void updateGame(){
     
     // COLLISION WITH ITSELF CHECK
     for(int i = 1; i < snake.length; i++){
-        if (snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y){
+        if (snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y)
             running = false;
-        }
     }
 
     /////////////////////////////////////////////////////////////
@@ -177,14 +178,16 @@ void updateGame(){
     /////////////////////////////////////////////////////////////
     if(snake.body[0].x == fruit.x && snake.body[0].y == fruit.y){
         score += 10;
-        if(snake.length<MAX_LENGTH) snake.length++; // to prevent overflow   
-        fruit.x = rand()%(WIDTH-2) + 1;
-        fruit.y = rand()%(HEIGHT-2) + 1;
-        for (int i = 0; i < snake.length; i++) {  //if food is spawned on snake's body food will be respawned till when it is not on snake's body
-            if (snake.body[i].x == fruit.x && snake.body[i].y == fruit.y) {   
+        if(snake.length < MAX_LENGTH) snake.length++; // to prevent overflow   
+        fruit.x = rand() % (WIDTH-2) + 1;
+        fruit.y = rand() % (HEIGHT-2) + 1;
+
+        //if food is spawned on snake's body food will be respawned till when it is not on snake's body
+        for(int i = 0; i < snake.length; i++){
+            if(snake.body[i].x == fruit.x && snake.body[i].y == fruit.y){   
                 fruit.x = rand()%(WIDTH-2) + 1;
                 fruit.y = rand()%(HEIGHT-2) + 1;
-                i=0;
+                i = 0;
             }
         }
     } 
@@ -248,7 +251,7 @@ void run_game(const char* user){
             endwin(); // to return to console (ncurses function)
         #endif
 
-        printf("\nGame Over!\n%s Your Score: %hu\n",user,score);
+        printf("\nGame Over!\n%s Your Score: %hu\n", user, score);
         updatehighscore(user, score); // Also, print if new highscore
 
         printf("Do you want to play again? (Y/N): ");
