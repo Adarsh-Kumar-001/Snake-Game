@@ -1,11 +1,8 @@
 #include "../include/game.h"
 #include "../include/scores.h"
+#include "../include/common.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include<time.h>
 
 #if defined(__linux__) || defined(__APPLE__)
     #include <ncurses.h>
@@ -56,9 +53,12 @@ void initGame(){
 
     // FRUIT PROPERTIES
     srand(time(NULL));
-    fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
-    fruit.y = rand()%(HEIGHT-2) + 1; // Random fruit spawn y-coordinate
-
+    do
+    {
+        fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
+        fruit.y = rand()%(HEIGHT-2) + 1; // Random fruit spawn y-coordinate
+    } while (snake.body[0].x == fruit.x && snake.body[0].y == fruit.y);
+    
     // MISC.
     running = true;
     paused = false;
@@ -75,7 +75,7 @@ void printGame(){
     clear();
     
     // DISPLAY THE SCORE
-    mvprintw(0,(WIDTH/2),"Score: %d",score);
+    mvprintw(0,(WIDTH/2),"Score: %hu",score);
 
     // PRINTING THE BOARD
     for(int y = 0; y <= HEIGHT+2; y++){
@@ -111,7 +111,7 @@ void printGame(){
     for(int i = 0; i <= HEIGHT+2; i++){
         for(int j = 0; j < WIDTH; j++){
             bool printed = false;
-            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %d",score); printed = true; }    // DISPLAY THE SCORE
+            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %hu",score); printed = true; }    // DISPLAY THE SCORE
             if(i == 1) { printf("_"); printed = true; } 
             if(j == 0 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
             if(j == WIDTH-1 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
@@ -177,10 +177,17 @@ void updateGame(){
     /////////////////////////////////////////////////////////////
     if(snake.body[0].x == fruit.x && snake.body[0].y == fruit.y){
         score += 10;
-        if(snake.length<MAX_LENGTH) snake.length++; // to prevent overflow
+        if(snake.length<MAX_LENGTH) snake.length++; // to prevent overflow   
         fruit.x = rand()%(WIDTH-2) + 1;
         fruit.y = rand()%(HEIGHT-2) + 1;
-    }
+        for (int i = 0; i < snake.length; i++) {  //if food is spawned on snake's body food will be respawned till when it is not on snake's body
+            if (snake.body[i].x == fruit.x && snake.body[i].y == fruit.y) {   
+                fruit.x = rand()%(WIDTH-2) + 1;
+                fruit.y = rand()%(HEIGHT-2) + 1;
+                i=0;
+            }
+        }
+    } 
 }
 
 void keyboardInput(){
@@ -241,7 +248,7 @@ void run_game(const char* user){
             endwin(); // to return to console (ncurses function)
         #endif
 
-        printf("\nGame Over! Your Score: %d\n", score);
+        printf("\nGame Over!\n%s Your Score: %hu\n",user,score);
         updatehighscore(user, score); // Also, print if new highscore
 
         printf("Do you want to play again? (Y/N): ");
