@@ -4,14 +4,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <ncurses.h>
-#include <unistd.h>
 #include <stdbool.h>
 #include <stdint.h>
+
+#if defined(__linux__) || defined(__APPLE__)
+    #include <ncurses.h>
+    #include <unistd.h>
+    #define sleep(ms) usleep(ms*1000)  // takes value in microseconds
+
+#elif defined(_WIN32)
+    #include <windows.h>
+    #include <conio.h>
+    #define sleep(ms) Sleep(ms)  // takes value in ms
+
+#endif
 
 #define WIDTH  45
 #define HEIGHT 25
 #define MAX_LENGTH 1000 // max length of snake body
+
+#if defined(__linux__) || defined(__APPLE__)
+    
+#elif defined(_WIN32)
+    
+#endif
 
 Snake snake;
 coordinates fruit;
@@ -20,12 +36,13 @@ bool running;
 bool paused;
 
 void initGame(){
-    // ncurses FUNCTIONS
-    initscr();
-    noecho();
-    curs_set(0);
-    keypad(stdscr, TRUE);
-    timeout(100);
+    #if defined(__linux__) || defined(__APPLE__)
+        initscr();
+        noecho();
+        curs_set(0);
+        keypad(stdscr, TRUE);
+        timeout(100);
+    #endif
 
     /////////////////////////////////////////////////////////////////
     //                      GAME SETTINGS
@@ -49,8 +66,14 @@ void initGame(){
 }
 
 void printGame(){
-    clear();
+    /////////////////////////////////////////////////////////////
+    //                      LINUX AND APPLE COMPATIBILITY
+    /////////////////////////////////////////////////////////////
 
+    #if defined(__linux__) || defined(__APPLE__)
+   
+    clear();
+    
     // DISPLAY THE SCORE
     mvprintw(0,(WIDTH/2),"Score: %d",score);
 
@@ -58,28 +81,60 @@ void printGame(){
     for(int y = 0; y <= HEIGHT+2; y++){
         for(int x = 0; x < WIDTH; x++){
             if(y == 1)  mvprintw(y, x, "_");
-            if(x == 0 && y >= 2 && y < HEIGHT)  mvprintw(y, x, "|");
-            if(x == WIDTH-1 && y >= 2 && y < HEIGHT)    mvprintw(y, x, "|");
             if(y == HEIGHT+2)   mvprintw(y, x, "-");
-            
-            // Fixed coordinates
-            if(x == 0 && y == HEIGHT)   mvprintw(y, x, "|");
-            if(x == 0 && y == HEIGHT+1) mvprintw(y, x, "|");
-            if(x == WIDTH-1 && y == HEIGHT) mvprintw(y, x, "|");
-            if(x == WIDTH-1 && y == HEIGHT+1)   mvprintw(y, x, "|");
+            if(x == 0 && y >= 2 && y < HEIGHT+2)  mvprintw(y, x, "|");
+            if(x == WIDTH-1 && y >= 2 && y < HEIGHT+2)    mvprintw(y, x, "|");
         }
     }
 
     // PRINTING THE SNAKE
-    for (int i=0;i<snake.length;i++){
-        if(i==0) mvprintw(snake.body[i].y+2,snake.body[i].x,"@");
-        else mvprintw(snake.body[i].y+2,snake.body[i].x,"o");
+    for (int i = 0;i < snake.length; i++){
+        if(i == 0) mvprintw(snake.body[i].y+2, snake.body[i].x, "@"); // head
+        else mvprintw(snake.body[i].y+2, snake.body[i].x, "o"); // body
     }
 
     // PRINTING THE FRUIT
     mvprintw(fruit.y+2,fruit.x,"+");
 
     refresh();
+
+
+    /////////////////////////////////////////////////////////////
+    //                      WINDOWS COMPATIBILITY
+    /////////////////////////////////////////////////////////////
+
+
+    #elif defined(_WIN32)
+    system("cls");
+    
+    // PRINTING THE BOARD
+    for(int i = 0; i <= HEIGHT+2; i++){
+        for(int j = 0; j < WIDTH; j++){
+            bool printed = false;
+            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %d",score); printed = true; }    // DISPLAY THE SCORE
+            if(i == 1) { printf("_"); printed = true; } 
+            if(j == 0 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
+            if(j == WIDTH-1 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
+            if(i == HEIGHT+2) { printf("-"); printed = true; }
+            
+            // PRINTING THE SNAKE
+            for (int k=0;k<snake.length;k++){
+                if(i == snake.body[k].y+2 && j == snake.body[k].x){
+                    (k==0) ?  printf("@") : printf("o") ;
+                    printed = true;
+                }
+            }
+            // PRINTING THE FRUIT
+            if(i == fruit.y+2 && j == fruit.x) {
+                printf("+");
+                printed = true;
+            }
+            if(printed == false)  printf(" ");
+        }
+        printf("\n");
+    }
+
+    #endif
 }
 
 void updateGame(){
@@ -129,7 +184,27 @@ void updateGame(){
 }
 
 void keyboardInput(){
-    char dir = getch();
+    char dir = '\0';
+
+    #if defined(__linux__) || defined(__APPLE__)
+        dir = getch();
+
+    #elif defined(_WIN32)
+        int wait_time = 100; // 100 ms
+        for(int i = 0; i < wait_time; i += 10){
+            if(_kbhit()){
+                dir = _getch();
+                break;
+            }
+            Sleep(10); // wait 10ms and then again check if a key is pressed
+        }
+    #endif
+    
+    // To prevent undefined behaviour in case of ERR (-1) from getch() if no key is pressed during timeout or default value in windows
+    if(dir == -1 || dir == '\0')    return;
+
+
+    // Save the current direction of the snake
     switch(dir){
         case 'k': // up
             if (snake.direction != 'k' && snake.direction != 'j') snake.direction = 'k'; 
@@ -160,9 +235,11 @@ void run_game(const char* user){
             printGame(); // Prints Board, Snake and Fruit
             keyboardInput(); // Takes the user input
             updateGame();
-            usleep(100000);
+            sleep(100);
         }
-        endwin(); // to return to console (ncurses function)
+        #if defined(__linux__) || defined(__APPLE__)
+            endwin(); // to return to console (ncurses function)
+        #endif
 
         printf("\nGame Over! Your Score: %d\n", score);
         updatehighscore(user, score); // Also, print if new highscore
