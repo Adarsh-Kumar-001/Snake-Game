@@ -1,0 +1,202 @@
+From ea18c3e6227fbbbe66315da29da86357747236f0 Mon Sep 17 00:00:00 2001
+From: Roshan-1024 <roshanpradhan1024@gmail.com>
+Date: Sun, 13 Apr 2025 19:44:47 +0530
+Subject: [PATCH] Refactor code
+
+---
+ .vscode/settings.json |  4 +++-
+ src/game.c            | 47 +++++++++++++++++++++++--------------------
+ src/main_menu.c       |  6 +++---
+ src/scores.c          | 13 +++++-------
+ 4 files changed, 36 insertions(+), 34 deletions(-)
+
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+index e785796..4832fd1 100644
+--- a/.vscode/settings.json
++++ b/.vscode/settings.json
+@@ -2,6 +2,8 @@
+     "files.associations": {
+         "stdint.h": "c",
+         "compare": "c",
+-        "cstdint": "c"
++        "cstdint": "c",
++        "main_menu.h": "c",
++        "game.h": "c"
+     }
+ }
+\ No newline at end of file
+diff --git a/src/game.c b/src/game.c
+index e306fcb..cfb4750 100644
+--- a/src/game.c
++++ b/src/game.c
+@@ -94,7 +94,7 @@ void printGame(){
+     }
+ 
+     // PRINTING THE FRUIT
+-    mvprintw(fruit.y+2,fruit.x,"+");
++    mvprintw(fruit.y+2, fruit.x, "+");
+ 
+     refresh();
+ 
+@@ -107,29 +107,31 @@ void printGame(){
+     #elif defined(_WIN32)
+     system("cls");
+     
+-    // PRINTING THE BOARD
+     for(int i = 0; i <= HEIGHT+2; i++){
+         for(int j = 0; j < WIDTH; j++){
+-            bool printed = false;
+-            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %hu",score); printed = true; }    // DISPLAY THE SCORE
+-            if(i == 1) { printf("_"); printed = true; } 
+-            if(j == 0 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
+-            if(j == WIDTH-1 && i >= 2 && i < HEIGHT+2) { printf("|"); printed = true; }
+-            if(i == HEIGHT+2) { printf("-"); printed = true; }
++            bool print_spaces = true;
++            // DISPLAY THE SCORE
++            if(i == 0 && j == (WIDTH/2) - 4) { printf("Score: %hu",score); print_spaces = false; }
++
++            // PRINTING THE BOARD
++            if(i == 1) { printf("_"); print_spaces = false; } 
++            if(j == 0 && i >= 2 && i < HEIGHT+2) { printf("|"); print_spaces = false; }
++            if(j == WIDTH-1 && i >= 2 && i < HEIGHT+2) { printf("|"); print_spaces = false; }
++            if(i == HEIGHT+2) { printf("-"); print_spaces = false; }
+             
+             // PRINTING THE SNAKE
+-            for (int k=0;k<snake.length;k++){
++            for(int k = 0; k < snake.length; k++){
+                 if(i == snake.body[k].y+2 && j == snake.body[k].x){
+-                    (k==0) ?  printf("@") : printf("o") ;
+-                    printed = true;
++                    (k == 0) ?  printf("@") : printf("o");
++                    print_spaces = false;
+                 }
+             }
+             // PRINTING THE FRUIT
+             if(i == fruit.y+2 && j == fruit.x) {
+                 printf("+");
+-                printed = true;
++                print_spaces = false;
+             }
+-            if(printed == false)  printf(" ");
++            if(print_spaces)  printf(" ");
+         }
+         printf("\n");
+     }
+@@ -167,9 +169,8 @@ void updateGame(){
+     
+     // COLLISION WITH ITSELF CHECK
+     for(int i = 1; i < snake.length; i++){
+-        if (snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y){
++        if (snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y)
+             running = false;
+-        }
+     }
+ 
+     /////////////////////////////////////////////////////////////
+@@ -177,14 +178,16 @@ void updateGame(){
+     /////////////////////////////////////////////////////////////
+     if(snake.body[0].x == fruit.x && snake.body[0].y == fruit.y){
+         score += 10;
+-        if(snake.length<MAX_LENGTH) snake.length++; // to prevent overflow   
+-        fruit.x = rand()%(WIDTH-2) + 1;
+-        fruit.y = rand()%(HEIGHT-2) + 1;
+-        for (int i = 0; i < snake.length; i++) {  //if food is spawned on snake's body food will be respawned till when it is not on snake's body
+-            if (snake.body[i].x == fruit.x && snake.body[i].y == fruit.y) {   
++        if(snake.length < MAX_LENGTH) snake.length++; // to prevent overflow   
++        fruit.x = rand() % (WIDTH-2) + 1;
++        fruit.y = rand() % (HEIGHT-2) + 1;
++
++        //if food is spawned on snake's body food will be respawned till when it is not on snake's body
++        for(int i = 0; i < snake.length; i++){
++            if(snake.body[i].x == fruit.x && snake.body[i].y == fruit.y){   
+                 fruit.x = rand()%(WIDTH-2) + 1;
+                 fruit.y = rand()%(HEIGHT-2) + 1;
+-                i=0;
++                i = 0;
+             }
+         }
+     } 
+@@ -248,7 +251,7 @@ void run_game(const char* user){
+             endwin(); // to return to console (ncurses function)
+         #endif
+ 
+-        printf("\nGame Over!\n%s Your Score: %hu\n",user,score);
++        printf("\nGame Over!\n%s Your Score: %hu\n", user, score);
+         updatehighscore(user, score); // Also, print if new highscore
+ 
+         printf("Do you want to play again? (Y/N): ");
+diff --git a/src/main_menu.c b/src/main_menu.c
+index 19e672b..30d552a 100644
+--- a/src/main_menu.c
++++ b/src/main_menu.c
+@@ -73,9 +73,9 @@ void print_Leaderboard(){
+ 
+     // Print leaderboard
+     print_centered("\n    Leaderboard    \n");
+-    for(int i = 0; i < count; i++){
++    for(int i = 0; i < count; i++)
+         printf("%d. %s - %hu\n", i + 1, players[i].name, players[i].score);
+-    }
++
+     printf("\n\nPress <Enter> to go back to Main Menu...");
+ }
+ 
+@@ -165,5 +165,5 @@ const char* run_main_menu(){
+         }
+     }
+ 
+-return name;
++    return name;
+ }
+diff --git a/src/scores.c b/src/scores.c
+index d24183b..abe8f74 100644
+--- a/src/scores.c
++++ b/src/scores.c
+@@ -4,7 +4,6 @@
+ #define MAX_USERS 100 // no. of lines
+ 
+ void updatehighscore(const char *user, uint16_t curr_score) {
+-
+     typedef struct{
+         char name[50];
+         uint16_t score;
+@@ -25,13 +24,12 @@ void updatehighscore(const char *user, uint16_t curr_score) {
+     ////////////////////////////////////////////////////////////////////////////
+ 
+     // store each username in highscore.csv
+-    while (fscanf(file, " %49[^,],%hu", players[linecount].name, &players[linecount].score) == 2 && linecount < MAX_USERS){
++    while(fscanf(file, " %49[^,],%hu", players[linecount].name, &players[linecount].score) == 2 && linecount < MAX_USERS)
+         linecount++;
+-    }
+     fclose(file);
+     
+-    for (int i = 0; i < linecount; i++) {
+-        if(strcmp(players[i].name, user) == 0){   // if current user found in highscores.csv (=> has a pre-existitng highscore)
++    for(int i = 0; i < linecount; i++){
++        if(strcmp(players[i].name, user) == 0){   // if current user found in highscores.csv (=> has a pre-existing highscore)
+             user_found = true;
+             // new highscore created
+             if(curr_score > players[i].score){
+@@ -59,7 +57,7 @@ void updatehighscore(const char *user, uint16_t curr_score) {
+ 
+     ///////////////////////////////////////////////////////
+     //      UPDATE THE highscore.csv file
+-   ///////////////////////////////////////////////////////
++    ///////////////////////////////////////////////////////
+ 
+    FILE *tempFile = fopen("data/highscores_temp.csv", "w");
+    if(!tempFile){
+@@ -67,9 +65,8 @@ void updatehighscore(const char *user, uint16_t curr_score) {
+       return;
+     }
+ 
+-    for(int i = 0; i < linecount; i++){
++    for(int i = 0; i < linecount; i++)
+        fprintf(tempFile, "%s,%hu\n", players[i].name, players[i].score);
+-    }   
+     fclose(tempFile);
+ 
+     remove("data/highscores.csv");
+-- 
+2.43.0
+

@@ -73,9 +73,9 @@ void print_Leaderboard(){
 
     // Print leaderboard
     print_centered("\n    Leaderboard    \n");
-    for(int i = 0; i < count; i++){
+    for(int i = 0; i < count; i++)
         printf("%d. %s - %hu\n", i + 1, players[i].name, players[i].score);
-    }
+
     printf("\n\nPress <Enter> to go back to Main Menu...");
 }
 
@@ -165,5 +165,5 @@ const char* run_main_menu(){
         }
     }
 
-return name;
+    return name;
 }

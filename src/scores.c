@@ -4,7 +4,6 @@
 #define MAX_USERS 100 // no. of lines
 
 void updatehighscore(const char *user, uint16_t curr_score) {
-
     typedef struct{
         char name[50];
         uint16_t score;
@@ -25,13 +24,12 @@ void updatehighscore(const char *user, uint16_t curr_score) {
     ////////////////////////////////////////////////////////////////////////////
 
     // store each username in highscore.csv
-    while (fscanf(file, " %49[^,],%hu", players[linecount].name, &players[linecount].score) == 2 && linecount < MAX_USERS){
+    while(fscanf(file, " %49[^,],%hu", players[linecount].name, &players[linecount].score) == 2 && linecount < MAX_USERS)
         linecount++;
-    }
     fclose(file);
     
-    for (int i = 0; i < linecount; i++) {
-        if(strcmp(players[i].name, user) == 0){   // if current user found in highscores.csv (=> has a pre-existitng highscore)
+    for(int i = 0; i < linecount; i++){
+        if(strcmp(players[i].name, user) == 0){   // if current user found in highscores.csv (=> has a pre-existing highscore)
             user_found = true;
             // new highscore created
             if(curr_score > players[i].score){
@@ -59,7 +57,7 @@ void updatehighscore(const char *user, uint16_t curr_score) {
 
     ///////////////////////////////////////////////////////
     //      UPDATE THE highscore.csv file
-   ///////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////
 
    FILE *tempFile = fopen("data/highscores_temp.csv", "w");
    if(!tempFile){
@@ -67,9 +65,8 @@ void updatehighscore(const char *user, uint16_t curr_score) {
       return;
     }
 
-    for(int i = 0; i < linecount; i++){
+    for(int i = 0; i < linecount; i++)
        fprintf(tempFile, "%s,%hu\n", players[i].name, players[i].score);
-    }   
     fclose(tempFile);
 
     remove("data/highscores.csv");
