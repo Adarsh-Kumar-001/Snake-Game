@@ -2,7 +2,7 @@
 #include "../include/scores.h"
 #include "../include/common.h"
 
-#include<time.h>
+#include <time.h>
 
 #if defined(__linux__) || defined(__APPLE__)
     #include <ncurses.h>
@@ -47,17 +47,17 @@ void initGame(){
 
     // SNAKE DEFAULT PROPERTIES
     snake.length = 1;
+    snake.body = (coordinates *)malloc(snake.length * sizeof(coordinates));
     snake.direction = 'l'; // Right
     snake.body[0].x = WIDTH/2; // Initial x coordinate of snake at center
     snake.body[0].y = HEIGHT/2; // Initial y coordinate of snake at center
 
     // FRUIT PROPERTIES
     srand(time(NULL));
-    do
-    {
+    do{
         fruit.x = rand()%(WIDTH-2) + 1; // Random fruit spawn x-coordinate
         fruit.y = rand()%(HEIGHT-2) + 1; // Random fruit spawn y-coordinate
-    } while (snake.body[0].x == fruit.x && snake.body[0].y == fruit.y);
+    }while(snake.body[0].x == fruit.x && snake.body[0].y == fruit.y);
     
     // MISC.
     running = true;
@@ -88,7 +88,7 @@ void printGame(){
     }
 
     // PRINTING THE SNAKE
-    for (int i = 0;i < snake.length; i++){
+    for(int i = 0;i < snake.length; i++){
         if(i == 0) mvprintw(snake.body[i].y+2, snake.body[i].x, "@"); // head
         else mvprintw(snake.body[i].y+2, snake.body[i].x, "o"); // body
     }
@@ -178,7 +178,16 @@ void updateGame(){
     /////////////////////////////////////////////////////////////
     if(snake.body[0].x == fruit.x && snake.body[0].y == fruit.y){
         score += 10;
-        if(snake.length < MAX_LENGTH) snake.length++; // to prevent overflow   
+
+        // Dynamically increase snake length
+        snake.length++;
+        snake.body = (coordinates *)realloc(snake.body, snake.length * sizeof(coordinates));
+
+        // Ensure new body part is at the end of the snake
+        snake.body[snake.length - 1].x = snake.body[snake.length - 2].x;
+        snake.body[snake.length - 1].y = snake.body[snake.length - 2].y;
+
+        // Spawn new fruit
         fruit.x = rand() % (WIDTH-2) + 1;
         fruit.y = rand() % (HEIGHT-2) + 1;
 
@@ -241,12 +250,18 @@ void run_game(const char* user){
     char choice;
     do{
         initGame(); // Applies default settings for the game
+        
+        ///////////////////////////////////////////////////
+        //                  GAME LOOP
+        ///////////////////////////////////////////////////
         while(running){
             printGame(); // Prints Board, Snake and Fruit
             keyboardInput(); // Takes the user input
             updateGame();
             sleep(100);
         }
+
+
         #if defined(__linux__) || defined(__APPLE__)
             endwin(); // to return to console (ncurses function)
         #endif

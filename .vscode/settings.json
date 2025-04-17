@@ -5,6 +5,8 @@
         "cstdint": "c",
         "main_menu.h": "c",
         "game.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "common.h": "c",
+        "scores.h": "c"
     }
 }

@@ -3,7 +3,6 @@
 
 #define WIDTH  45
 #define HEIGHT 25
-#define MAX_LENGTH 1000
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -13,7 +12,7 @@ typedef struct {
 }coordinates;
 
 typedef struct {
-    coordinates body[MAX_LENGTH];
+    coordinates* body;
     int length;
     char direction;
 }Snake;
