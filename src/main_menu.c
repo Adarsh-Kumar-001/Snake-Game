@@ -84,11 +84,12 @@ void print_Leaderboard(){
 
     // Sort players by score (descending) using Bubble Sort
     for(int i = 0; i < count - 1; i++){
-        for(int j = i + 1; j < count; j++){
-            if(players[j].score > players[i].score){
-                Player temp = players[i];
-                players[i] = players[j];
-                players[j] = temp;
+        for(int j = 0; j < count - i - 1; j++){
+            if(players[j].score < players[j + 1].score){
+                // Swap adjacent elements
+                Player temp = players[j];
+                players[j] = players[j + 1];
+                players[j + 1] = temp;
             }
         }
     }
